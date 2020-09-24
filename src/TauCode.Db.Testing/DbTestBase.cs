@@ -3,6 +3,7 @@ using System.Data;
 using System.Reflection;
 using TauCode.Db.FluentMigrations;
 
+// todo clean up
 namespace TauCode.Db.Testing
 {
     public abstract class DbTestBase
@@ -25,7 +26,8 @@ namespace TauCode.Db.Testing
         protected virtual IUtilityFactory
             GetUtilityFactory() => DbUtils.GetUtilityFactory(this.GetDbProviderName());
 
-        protected virtual IDbConnection CreateConnection() => DbUtils.CreateConnection(this.GetDbProviderName());
+        //protected virtual IDbConnection CreateConnection() => DbUtils.CreateConnection(this.GetDbProviderName());
+        protected abstract IDbConnection CreateConnection();
 
         protected virtual IDbInspector CreateDbInspector()
         {
