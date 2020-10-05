@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Data;
+using System.Data.SQLite;
 using System.Reflection;
 using TauCode.Db.FluentMigrations;
+using TauCode.Db.SQLite;
 
 namespace TauCode.Db.Testing
 {
@@ -9,8 +11,8 @@ namespace TauCode.Db.Testing
     {
         #region Abstract
 
-        protected abstract IDbConnection CreateDbConnection();
         protected abstract string GetConnectionString();
+
         protected abstract IDbUtilityFactory GetDbUtilityFactory();
 
         #endregion
@@ -46,11 +48,12 @@ namespace TauCode.Db.Testing
 
         protected virtual string GetSchema() => null;
 
+        protected virtual IDbConnection CreateConnection() => this.GetDbUtilityFactory().CreateConnection();
 
         protected virtual IDbInspector CreateDbInspector()
         {
             var factory = this.GetDbUtilityFactory();
-            var dbInspector = factory.CreateDbInspector(this.GetPreparedDbConnection(), this.GetSchema());
+            var dbInspector = factory.CreateInspector(this.GetPreparedDbConnection(), this.GetSchema());
             return dbInspector;
         }
 
@@ -60,7 +63,7 @@ namespace TauCode.Db.Testing
         protected virtual IDbSerializer CreateDbSerializer()
         {
             var factory = this.GetDbUtilityFactory();
-            var dbSerializer = factory.CreateDbSerializer(this.GetPreparedDbConnection(), this.GetSchema());
+            var dbSerializer = factory.CreateSerializer(this.GetPreparedDbConnection(), this.GetSchema());
             return dbSerializer;
         }
 
@@ -70,6 +73,14 @@ namespace TauCode.Db.Testing
                 this.GetDbUtilityFactory().GetDialect().Name,
                 this.GetConnectionString(),
                 migrationsAssembly);
+        }
+
+        protected virtual void TuneConnection(IDbConnection connection)
+        {
+            if (connection is SQLiteConnection sqLiteConnection)
+            {
+                sqLiteConnection.BoostSQLiteInsertions();
+            }
         }
 
         #endregion
@@ -88,9 +99,11 @@ namespace TauCode.Db.Testing
 
         protected virtual void OneTimeSetUpImpl()
         {
-            this.Connection = this.CreateDbConnection();
+            this.Connection = this.CreateConnection();
             this.Connection.ConnectionString = this.GetConnectionString();
             this.Connection.Open();
+
+            this.TuneConnection(this.Connection);
 
             this.DbInspector = this.CreateDbInspector();
             this.DbSerializer = this.CreateDbSerializer();
