@@ -106,7 +106,14 @@ namespace TauCode.Db.Testing
                 throw new InvalidOperationException($"'{nameof(CreateConnection)}' returned null.");
             }
 
-            this.Connection.ConnectionString = this.GetConnectionString();
+            var connectionString = this.GetConnectionString();
+
+            if (connectionString == null)
+            {
+                throw new InvalidOperationException($"'{nameof(GetConnectionString)}' returned null.");
+            }
+
+            this.Connection.ConnectionString = connectionString;
             this.Connection.Open();
 
             this.TuneConnection(this.Connection);
