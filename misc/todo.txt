@@ -1,1 +1,8 @@
-﻿
+﻿2020-10-04
+==========
+    1. Test ut-s with canceling handlers.
+
+2020-10-05
+==========
+    1. In all exception messages in all Taucode, replace 'null' with null w/o quotes.
+
