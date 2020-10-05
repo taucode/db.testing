@@ -100,6 +100,12 @@ namespace TauCode.Db.Testing
         protected virtual void OneTimeSetUpImpl()
         {
             this.Connection = this.CreateConnection();
+
+            if (this.Connection == null)
+            {
+                throw new InvalidOperationException($"'{nameof(CreateConnection)}' returned null.");
+            }
+
             this.Connection.ConnectionString = this.GetConnectionString();
             this.Connection.Open();
 
@@ -113,7 +119,7 @@ namespace TauCode.Db.Testing
 
         protected virtual void OneTimeTearDownImpl()
         {
-            this.Connection.Dispose();
+            this.Connection?.Dispose();
             this.Connection = null;
         }
 
