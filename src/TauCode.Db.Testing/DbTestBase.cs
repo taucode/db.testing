@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Data;
-using System.Data.SQLite;
-using System.Reflection;
-using TauCode.Db.FluentMigrations;
-using TauCode.Db.SQLite;
+
+// todo clean
 
 namespace TauCode.Db.Testing
 {
@@ -67,21 +65,21 @@ namespace TauCode.Db.Testing
             return dbSerializer;
         }
 
-        protected virtual FluentDbMigrator CreateFluentMigrator(Assembly migrationsAssembly)
-        {
-            return new FluentDbMigrator(
-                this.GetDbUtilityFactory().GetDialect().Name,
-                this.GetConnectionString(),
-                migrationsAssembly);
-        }
+        //protected virtual FluentDbMigrator CreateFluentMigrator(Assembly migrationsAssembly)
+        //{
+        //    return new FluentDbMigrator(
+        //        this.GetDbUtilityFactory().GetDialect().Name,
+        //        this.GetConnectionString(),
+        //        migrationsAssembly);
+        //}
 
-        protected virtual void TuneConnection(IDbConnection connection)
-        {
-            if (connection is SQLiteConnection sqLiteConnection)
-            {
-                sqLiteConnection.BoostSQLiteInsertions();
-            }
-        }
+        //protected virtual void TuneConnection(IDbConnection connection)
+        //{
+        //    if (connection is SQLiteConnection sqLiteConnection)
+        //    {
+        //        sqLiteConnection.BoostSQLiteInsertions();
+        //    }
+        //}
 
         #endregion
 
@@ -116,7 +114,7 @@ namespace TauCode.Db.Testing
             this.Connection.ConnectionString = connectionString;
             this.Connection.Open();
 
-            this.TuneConnection(this.Connection);
+            //this.TuneConnection(this.Connection);
 
             this.DbInspector = this.CreateDbInspector();
             this.DbSerializer = this.CreateDbSerializer();
