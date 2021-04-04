@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Data;
 
-// todo clean
-
 namespace TauCode.Db.Testing
 {
     public abstract class DbTestBase
@@ -12,6 +10,8 @@ namespace TauCode.Db.Testing
         protected abstract string GetConnectionString();
 
         protected abstract IDbUtilityFactory GetDbUtilityFactory();
+
+        protected abstract void TuneConnection(IDbConnection connection);
 
         #endregion
 
@@ -65,22 +65,6 @@ namespace TauCode.Db.Testing
             return dbSerializer;
         }
 
-        //protected virtual FluentDbMigrator CreateFluentMigrator(Assembly migrationsAssembly)
-        //{
-        //    return new FluentDbMigrator(
-        //        this.GetDbUtilityFactory().GetDialect().Name,
-        //        this.GetConnectionString(),
-        //        migrationsAssembly);
-        //}
-
-        //protected virtual void TuneConnection(IDbConnection connection)
-        //{
-        //    if (connection is SQLiteConnection sqLiteConnection)
-        //    {
-        //        sqLiteConnection.BoostSQLiteInsertions();
-        //    }
-        //}
-
         #endregion
 
         #region Utilities
@@ -114,7 +98,7 @@ namespace TauCode.Db.Testing
             this.Connection.ConnectionString = connectionString;
             this.Connection.Open();
 
-            //this.TuneConnection(this.Connection);
+            this.TuneConnection(this.Connection);
 
             this.DbInspector = this.CreateDbInspector();
             this.DbSerializer = this.CreateDbSerializer();
