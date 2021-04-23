@@ -44,24 +44,24 @@ namespace TauCode.Db.Testing
 
         #region Virtual
 
-        protected virtual string GetSchema() => null;
+        protected virtual string GetSchemaName() => null;
 
         protected virtual IDbConnection CreateConnection() => this.GetDbUtilityFactory().CreateConnection();
 
         protected virtual IDbInspector CreateDbInspector()
         {
             var factory = this.GetDbUtilityFactory();
-            var dbInspector = factory.CreateInspector(this.GetPreparedDbConnection(), this.GetSchema());
+            var dbInspector = factory.CreateInspector(this.GetPreparedDbConnection(), this.GetSchemaName());
             return dbInspector;
         }
 
         protected virtual IDbTableInspector CreateTableInspector(string tableName) =>
-            this.GetDbUtilityFactory().CreateTableInspector(this.Connection, this.GetSchema(), tableName);
+            this.GetDbUtilityFactory().CreateTableInspector(this.Connection, this.GetSchemaName(), tableName);
 
         protected virtual IDbSerializer CreateDbSerializer()
         {
             var factory = this.GetDbUtilityFactory();
-            var dbSerializer = factory.CreateSerializer(this.GetPreparedDbConnection(), this.GetSchema());
+            var dbSerializer = factory.CreateSerializer(this.GetPreparedDbConnection(), this.GetSchemaName());
             return dbSerializer;
         }
 
