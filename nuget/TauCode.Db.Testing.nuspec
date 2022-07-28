@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>TauCode.Db.Testing</id>
-    <version>1.3.7-alpha.1.2022-07-28.09-02</version>
+    <version>1.3.8-alpha.1.2022-07-28.09-02</version>
     <authors>TauCode</authors>
     <owners>TauCode</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -13,7 +13,7 @@
       Basic functionality for database-related testing
     </description>
     <releaseNotes>
-      Developing release 1.3.7.
+      Developing release 1.3.8.
     </releaseNotes>
     <tags>taucode db database testing</tags>
     <dependencies>
