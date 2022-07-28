@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29609.76
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{4C530605-226B-4EA0-9D4B-FCCF912899EB}"
 	ProjectSection(SolutionItems) = preProject
@@ -23,7 +23,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{626B9D25-F683-4477-9BDE-C6D615710FAF}"
 	ProjectSection(SolutionItems) = preProject
 		build\azure-pipelines-dev.yml = build\azure-pipelines-dev.yml
-		build\azure-pipelines.yml = build\azure-pipelines.yml
+		build\azure-pipelines-main.yml = build\azure-pipelines-main.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TauCode.Db.Testing.Tests", "test\TauCode.Db.Testing.Tests\TauCode.Db.Testing.Tests.csproj", "{7CB9F893-D877-425C-BD70-DC0566582B57}"
