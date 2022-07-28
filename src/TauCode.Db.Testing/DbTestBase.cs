@@ -1,66 +1,79 @@
 ﻿using System;
 using System.Data;
-using System.Reflection;
-using TauCode.Db.FluentMigrations;
 
 namespace TauCode.Db.Testing
 {
     public abstract class DbTestBase
     {
-        #region Utilities
+        #region Abstract
 
-        protected abstract string GetDbProviderName();
         protected abstract string GetConnectionString();
-        protected IUtilityFactory UtilityFactory { get; set; }
-        protected IDbConnection Connection { get; set; }
-        protected IDbInspector DbInspector { get; set; }
-        protected ICruder Cruder { get; set; }
-        protected IScriptBuilder ScriptBuilder { get; set; }
-        protected IDbSerializer DbSerializer { get; set; }
+
+        protected abstract IDbUtilityFactory GetDbUtilityFactory();
+
+        protected abstract void TuneConnection(IDbConnection connection);
 
         #endregion
 
-        #region Utility Creation
+        #region Private
 
-        protected virtual IUtilityFactory
-            GetUtilityFactory() => DbUtils.GetUtilityFactory(this.GetDbProviderName());
+        private IDbConnection GetPreparedDbConnection()
+        {
+            var connection = this.Connection;
 
-        protected virtual IDbConnection CreateConnection() => DbUtils.CreateConnection(this.GetDbProviderName());
+            if (connection == null)
+            {
+                throw new InvalidOperationException($"'{nameof(Connection)}' is null.");
+            }
+
+            if (connection.ConnectionString == null)
+            {
+                throw new InvalidOperationException(
+                    $"'{nameof(Connection)}.{nameof(IDbConnection.ConnectionString)}' is null.");
+            }
+
+            if (connection.State == ConnectionState.Closed)
+            {
+                throw new InvalidOperationException($"'{nameof(Connection)}' is or closed.");
+            }
+
+            return connection;
+        }
+
+        #endregion
+
+        #region Virtual
+
+        protected virtual string GetSchemaName() => null;
+
+        protected virtual IDbConnection CreateConnection() => this.GetDbUtilityFactory().CreateConnection();
 
         protected virtual IDbInspector CreateDbInspector()
         {
-            if (this.UtilityFactory == null)
-            {
-                throw new InvalidOperationException($"'{nameof(UtilityFactory)}' is null.");
-            }
-
-            if (this.Connection == null)
-            {
-                throw new InvalidOperationException($"'{nameof(Connection)}' is null.");
-            }
-
-            return this.UtilityFactory.CreateDbInspector(this.Connection);
+            var factory = this.GetDbUtilityFactory();
+            var dbInspector = factory.CreateInspector(this.GetPreparedDbConnection(), this.GetSchemaName());
+            return dbInspector;
         }
+
+        protected virtual IDbTableInspector CreateTableInspector(string tableName) =>
+            this.GetDbUtilityFactory().CreateTableInspector(this.Connection, this.GetSchemaName(), tableName);
 
         protected virtual IDbSerializer CreateDbSerializer()
         {
-            if (this.UtilityFactory == null)
-            {
-                throw new InvalidOperationException($"'{nameof(UtilityFactory)}' is null.");
-            }
-
-            if (this.Connection == null)
-            {
-                throw new InvalidOperationException($"'{nameof(Connection)}' is null.");
-            }
-
-            return this.UtilityFactory.CreateDbSerializer(this.Connection);
+            var factory = this.GetDbUtilityFactory();
+            var dbSerializer = factory.CreateSerializer(this.GetPreparedDbConnection(), this.GetSchemaName());
+            return dbSerializer;
         }
 
-        protected virtual FluentDbMigrator CreateFluentMigrator(Assembly migrationsAssembly)
-        {
-            return new FluentDbMigrator(this.GetDbProviderName(), this.GetConnectionString(), migrationsAssembly);
-        }
+        #endregion
+
+        #region Utilities
+
+        protected IDbConnection Connection { get; set; }
+        protected IDbInspector DbInspector { get; set; }
+        protected IDbSerializer DbSerializer { get; set; }
+        protected IDbCruder Cruder { get; set; }
+        protected IDbScriptBuilder ScriptBuilder { get; set; }
 
         #endregion
 
@@ -68,11 +81,24 @@ namespace TauCode.Db.Testing
 
         protected virtual void OneTimeSetUpImpl()
         {
-            this.UtilityFactory = this.GetUtilityFactory();
-
             this.Connection = this.CreateConnection();
-            this.Connection.ConnectionString = this.GetConnectionString();
+
+            if (this.Connection == null)
+            {
+                throw new InvalidOperationException($"'{nameof(CreateConnection)}' returned null.");
+            }
+
+            var connectionString = this.GetConnectionString();
+
+            if (connectionString == null)
+            {
+                throw new InvalidOperationException($"'{nameof(GetConnectionString)}' returned null.");
+            }
+
+            this.Connection.ConnectionString = connectionString;
             this.Connection.Open();
+
+            this.TuneConnection(this.Connection);
 
             this.DbInspector = this.CreateDbInspector();
             this.DbSerializer = this.CreateDbSerializer();
@@ -82,7 +108,7 @@ namespace TauCode.Db.Testing
 
         protected virtual void OneTimeTearDownImpl()
         {
-            this.Connection.Dispose();
+            this.Connection?.Dispose();
             this.Connection = null;
         }
 
