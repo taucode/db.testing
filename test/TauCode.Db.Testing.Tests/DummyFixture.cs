@@ -3,7 +3,7 @@
 namespace TauCode.Db.Testing.Tests
 {
     [TestFixture]
-    public class DbTestingDummyFixture
+    public class DummyFixture
     {
         [Test]
         public void DbTestingDummyTest()
