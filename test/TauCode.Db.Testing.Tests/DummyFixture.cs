@@ -6,7 +6,7 @@ namespace TauCode.Db.Testing.Tests
     public class DummyFixture
     {
         [Test]
-        public void DbTestingDummyTest()
+        public void DummyTest()
         {
             Assert.Pass("Added for Azure DevOps compatibility.");
         }
